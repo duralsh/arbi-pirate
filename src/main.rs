@@ -19,21 +19,27 @@ async fn main() -> eyre::Result<()> {
     println!("Block Number: {}\n", block_number);
     let wavax_usdt_pair_address: Address = "0x87EB2F90d7D0034571f343fb7429AE22C1Bd9F72".parse()?;
     let wavax_usdc_pair_address: Address = "0xD446eb1660F766d533BeCeEf890Df7A69d26f7d1".parse()?;
-    let (reserve_0, reserve_1) = get_reserves(wavax_usdt_pair_address, provider.clone()).await?;
-    println!(
-        "{}\nWAVAX Supply: {}\nUSDT Supply: {}\n",
-        "WAVAX-USDT JOE LP".green(),
-        reserve_0,
-        reserve_1
-    );
-    let (reserve_0, reserve_1) = get_reserves(wavax_usdc_pair_address, provider.clone()).await?;
-    println!(
-        "{}\nWAVAX Supply: {}\nUSDC Supply: {}\n",
-        "WAVAX-USDT JOE LP".green(),
-        reserve_0,
-        reserve_1
-    );
 
+    let provider_clone = provider.clone();
+
+    let task_0 = tokio::spawn(async move {
+        get_reserves(wavax_usdt_pair_address, provider).await
+    });
+    
+    let task_1 = tokio::spawn(async move {
+        get_reserves(wavax_usdc_pair_address, provider_clone).await
+    });
+
+    for task in [task_0, task_1] {
+        if let Ok((reserve_0, reserve_1)) = task.await? {
+            println!(
+                "{}\nWAVAX Supply: {}\nUSDT Supply: {}\n",
+                "WAVAX-USDT JOE LP".green(),
+                reserve_0,
+                reserve_1
+            );
+        }
+    }
     Ok(())
 }
 
