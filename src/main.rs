@@ -31,10 +31,13 @@ async fn main() -> eyre::Result<()> {
 
     for task in [task_0, task_1] {
         if let Ok((pair_name,reserve_0, reserve_1)) = task.await? {
+            let tokens: Vec<&str> = pair_name.split('-').collect();
             println!(
-                "{}\nWAVAX Supply: {}\nUSDT Supply: {}\n",
+                "{}\n{} Supply: {}\n{} Supply: {}\n",
                 pair_name.green(),
+                tokens[0].red(),
                 reserve_0,
+                tokens[1].red(),
                 reserve_1
             );
         }
