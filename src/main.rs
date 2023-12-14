@@ -17,8 +17,10 @@ async fn main() -> eyre::Result<()> {
     println!("Chain ID: {}", chain_id);
     println!("Block Number: {}", block_number);
     let wavax_usdt_pair_address: Address = "0x87EB2F90d7D0034571f343fb7429AE22C1Bd9F72".parse()?;
+    let wavax_usdc_pair_address: Address = "0xD446eb1660F766d533BeCeEf890Df7A69d26f7d1".parse()?;
    
     let wavax_usdt_pair = IJOEPair::new(wavax_usdt_pair_address, provider.clone());
+    let wavax_usdc_pair = IJOEPair::new(wavax_usdc_pair_address, provider.clone());
 
     // Use the get_reserves() function to fetch the pool reserves
     let wavax_token_address:Address = wavax_usdt_pair.get_token_x().call().await?;
@@ -32,6 +34,9 @@ async fn main() -> eyre::Result<()> {
     let (reserve_0, reserve_1) = wavax_usdt_pair.get_reserves().call().await?;
     println!("WAVAX Supply: {}", reserve_0/10u128.pow(wavax_decimal.into()));
     println!("USDT Supply: {}", reserve_1/ 10u128.pow(usdt_decimal.into()));
+    let (reserve_0, reserve_1) = wavax_usdc_pair.get_reserves().call().await?;
+    println!("WAVAX Supply: {}", reserve_0/10u128.pow(wavax_decimal.into()));
+    println!("USDC Supply: {}", reserve_1/ 10u128.pow(usdt_decimal.into()));
 
     Ok(())
 }
