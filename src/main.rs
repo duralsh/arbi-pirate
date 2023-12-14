@@ -18,8 +18,6 @@ async fn main() -> eyre::Result<()> {
 
     println!("Chain ID: {}", chain_id);
     println!("Block Number: {}\n", block_number);
-    let wavax_usdt_pair_address: Address = "0x87EB2F90d7D0034571f343fb7429AE22C1Bd9F72".parse()?;
-    let wavax_usdc_pair_address: Address = "0xD446eb1660F766d533BeCeEf890Df7A69d26f7d1".parse()?;
 
     let provider_clone = provider.clone();
 
