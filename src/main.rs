@@ -45,7 +45,7 @@ async fn main() -> eyre::Result<()> {
 }
 
 
-async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::Http>>) -> eyre::Result<(String,u128,u128)> {
+async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::Http>>) -> eyre::Result<(&str,u128,u128)> {
 
     let pair_address_map = get_pair_address_mapping();
     let pair_address = pair_address_map
@@ -61,7 +61,7 @@ async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::
     let x_decimal: u8 = x_token.decimals().call().await?;
     let y_decimal: u8 = y_token.decimals().call().await?;
     let (reserve_0, reserve_1) = pair.get_reserves().call().await?;
-    Ok((pair_name.to_owned(),reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into())))
+    Ok((pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into())))
 }
 
 
