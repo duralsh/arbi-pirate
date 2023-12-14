@@ -21,14 +21,14 @@ async fn main() -> eyre::Result<()> {
     let wavax_usdc_pair_address: Address = "0xD446eb1660F766d533BeCeEf890Df7A69d26f7d1".parse()?;
     let (reserve_0, reserve_1) = get_reserves(wavax_usdt_pair_address, provider.clone()).await?;
     println!(
-        "{}\nWAVAX Supply: {}\nUSDT Supply: {}",
+        "{}\nWAVAX Supply: {}\nUSDT Supply: {}\n",
         "WAVAX-USDT JOE LP".green(),
         reserve_0,
         reserve_1
     );
     let (reserve_0, reserve_1) = get_reserves(wavax_usdc_pair_address, provider.clone()).await?;
     println!(
-        "{}\nWAVAX Supply: {}\nUSDC Supply: {}",
+        "{}\nWAVAX Supply: {}\nUSDC Supply: {}\n",
         "WAVAX-USDT JOE LP".green(),
         reserve_0,
         reserve_1
