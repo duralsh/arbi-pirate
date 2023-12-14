@@ -10,3 +10,4 @@ ethers = { version = "2.0", features = ["legacy"] }
 eyre = "0.6"
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.11", features = ["json"] }
+colorize = "0.1.0"
