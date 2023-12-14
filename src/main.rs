@@ -9,7 +9,7 @@ abigen!(IERC20, "./abis/erc20_abi.json");
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
-    let provider = Arc::new(Provider::try_from(RPC_URL)?);
+    let provider: Arc<Provider<ethers::providers::Http>> = Arc::new(Provider::try_from(RPC_URL)?);
 
     let chain_id = provider.get_chainid().await?;
     let block_number = provider.get_block_number().await?;
@@ -51,3 +51,17 @@ async fn main() -> eyre::Result<()> {
 
     Ok(())
 }
+
+
+async fn get_reserves(pair_address: Address, provider:Arc<Provider<ethers::providers::Http>>) -> eyre::Result<(u128,u128)> {
+    let pair = IJOEPair::new(pair_address, provider.clone());
+    let token_x_address: Address = pair.get_token_x().call().await?;
+    let token_y_address: Address = pair.get_token_y().call().await?;
+    let x_token = IERC20::new(token_x_address, provider.clone());
+    let y_token = IERC20::new(token_y_address, provider.clone());
+    let x_decimal: u8 = x_token.decimals().call().await?;
+    let y_decimal: u8 = y_token.decimals().call().await?;
+    let (reserve_0, reserve_1) = pair.get_reserves().call().await?;
+    Ok((reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into())))
+}
+
