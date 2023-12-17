@@ -56,7 +56,7 @@ async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::
     let y_decimal: u8 = y_token.decimals().call().await?;
     let (reserve_0, reserve_1) = pair.get_reserves().call().await?;
 
-    Ok(Pair::new(pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into()), reserve_0 as f64 / reserve_1 as f64))
+    Ok(Pair::new(pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into())))
 }
 
 
