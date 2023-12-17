@@ -1,10 +1,11 @@
 use ethers::prelude::abigen;
 use ethers::providers::{Middleware, Provider};
 use ethers::types::Address;
+use pair::Pair;
 use std::sync::Arc;
 const RPC_URL: &str = "https://api.avax.network/ext/bc/C/rpc";
-use colorize::{self, AnsiColor};
 use std::collections::HashMap;
+mod pair;
 
 abigen!(IJOEPair, "./abis/joe_lp_abi.json");
 abigen!(IERC20, "./abis/erc20_abi.json");
@@ -30,23 +31,15 @@ async fn main() -> eyre::Result<()> {
     });
 
     for task in [task_0, task_1] {
-        if let Ok((pair_name,reserve_0, reserve_1)) = task.await? {
-            let tokens: Vec<&str> = pair_name.split('-').collect();
-            println!(
-                "{}\n{} Supply: {}\n{} Supply: {}\n",
-                pair_name.green(),
-                tokens[0].red(),
-                reserve_0,
-                tokens[1].red(),
-                reserve_1
-            );
+        if let Ok(pair) = task.await? {
+            println!("{}", pair);
         }
     }
     Ok(())
 }
 
 
-async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::Http>>) -> eyre::Result<(&str,u128,u128)> {
+async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::Http>>) -> eyre::Result<Pair> {
 
     let pair_address_map = get_pair_address_mapping();
     let pair_address = pair_address_map
@@ -62,7 +55,8 @@ async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::
     let x_decimal: u8 = x_token.decimals().call().await?;
     let y_decimal: u8 = y_token.decimals().call().await?;
     let (reserve_0, reserve_1) = pair.get_reserves().call().await?;
-    Ok((pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into())))
+
+    Ok(Pair::new(pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into()), reserve_0 as f64 / reserve_1 as f64))
 }
 
 
