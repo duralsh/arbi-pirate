@@ -62,8 +62,7 @@ async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::
     let raw_price: U256 = pair.get_price_from_id(active_bin).call().await?;
     let price = adjust_price(raw_price, x_decimal, y_decimal);
 
-    println!("Price: {}", price);
-    Ok(Pair::new(pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into())))
+    Ok(Pair::new(pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into()), price))
 }
 
 
