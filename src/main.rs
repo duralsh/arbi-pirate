@@ -21,17 +21,13 @@ async fn main() -> eyre::Result<()> {
     println!("Chain ID: {}", chain_id);
     println!("Block Number: {}\n", block_number);
 
-    let provider_clone = provider.clone();
+   let tasks = vec![
+        tokio::spawn(get_reserves("WAVAX-USDT", provider.clone())),
+        tokio::spawn(get_reserves("WAVAX-USDC", provider.clone())),
+        tokio::spawn(get_reserves("USDT-USDC", provider.clone())),
+    ];
 
-    let task_0 = tokio::spawn(async move {
-        get_reserves("WAVAX-USDT", provider).await
-    });
-    
-    let task_1 = tokio::spawn(async move {
-        get_reserves("WAVAX-USDC", provider_clone).await
-    });
-
-    for task in [task_0, task_1] {
+    for task in tasks {
         if let Ok(pair) = task.await? {
             println!("{}", pair);
         }
@@ -69,6 +65,7 @@ fn get_pair_address_mapping() -> HashMap<&'static str, Address> {
     let mut map = HashMap::new();
     map.insert("WAVAX-USDT", "0x87EB2F90d7D0034571f343fb7429AE22C1Bd9F72".parse().unwrap());
     map.insert("WAVAX-USDC", "0xD446eb1660F766d533BeCeEf890Df7A69d26f7d1".parse().unwrap());
+    map.insert("USDT-USDC", "0x9B2Cc8E6a2Bbb56d6bE4682891a91B0e48633c72".parse().unwrap());
     map
 }
 
