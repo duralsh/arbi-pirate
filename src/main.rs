@@ -5,15 +5,19 @@ use pair::Pair;
 use std::sync::Arc;
 const RPC_URL: &str = "https://api.avax.network/ext/bc/C/rpc";
 use std::collections::HashMap;
-mod pair;
 use ethers::types::U256;
+use block_watcher::watch;
 
+mod pair;
+mod block_watcher;
 abigen!(IJOEPair, "./abis/joe_lp_abi.json");
 abigen!(IERC20, "./abis/erc20_abi.json");
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     let provider: Arc<Provider<ethers::providers::Http>> = Arc::new(Provider::try_from(RPC_URL)?);
+
+    let watch_task = tokio::spawn(watch());
 
     let chain_id = provider.get_chainid().await?;
     let block_number = provider.get_block_number().await?;
@@ -32,6 +36,7 @@ async fn main() -> eyre::Result<()> {
             println!("{}", pair);
         }
     }
+    watch_task.await??;
     Ok(())
 }
 
