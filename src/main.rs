@@ -61,7 +61,6 @@ async fn get_reserves(pair_name: &str, provider:Arc<Provider<ethers::providers::
     let active_bin:u32 = pair.get_active_id().call().await?;
     let raw_price: U256 = pair.get_price_from_id(active_bin).call().await?;
     let price = adjust_price(raw_price, x_decimal, y_decimal);
-
     Ok(Pair::new(pair_name, reserve_0 / 10u128.pow(x_decimal.into()), reserve_1 / 10u128.pow(y_decimal.into()), price))
 }
 
@@ -74,7 +73,7 @@ fn get_pair_address_mapping() -> HashMap<&'static str, Address> {
 }
 
 
-fn adjust_price(price: ethers::types::U256, decimals_x: u8, decimals_y: u8) -> f64 {
+fn adjust_price(price: U256, decimals_x: u8, decimals_y: u8) -> f64 {
     
     
     let price_f64 =    convert_fixed_point(price);
