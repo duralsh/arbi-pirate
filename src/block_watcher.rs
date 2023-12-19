@@ -1,7 +1,7 @@
 
 use ethers::providers::{Provider, Middleware, Ws};
 use ethers::providers::StreamExt;
-const RPC_URL: &str = "https://api.avax.network/ext/bc/C/rpc";
+const RPC_URL: &str = "wss://api.avax.network/ext/bc/C/ws";
 
 
 pub async fn watch() -> eyre::Result<()> {
