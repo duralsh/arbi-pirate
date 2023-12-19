@@ -17,7 +17,7 @@ abigen!(IERC20, "./abis/erc20_abi.json");
 async fn main() -> eyre::Result<()> {
     let provider: Arc<Provider<ethers::providers::Http>> = Arc::new(Provider::try_from(RPC_URL)?);
 
-    let watch_task = tokio::spawn(watch());
+    let watch_task = tokio::spawn(watch(provider.clone()));
 
     let chain_id = provider.get_chainid().await?;
     let block_number = provider.get_block_number().await?;
