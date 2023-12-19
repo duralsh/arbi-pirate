@@ -6,13 +6,11 @@ const RPC_URL: &str = "wss://api.avax.network/ext/bc/C/ws";
 
 pub async fn watch() -> eyre::Result<()> {
     let provider = Provider::<Ws>::connect(RPC_URL).await?;
-    let mut stream = provider.subscribe_blocks().await?;
+    let mut stream = provider.subscribe_full_pending_txs().await?;
     while let Some(block) = stream.next().await {
         println!(
-            "Ts: {:?}, block number: {} -> {:?}",
-            block.timestamp,
-            block.number.unwrap(),
-            block.hash.unwrap()
+            "\n\nTX : {:?}\n\n",
+            block
         );
     }
     Ok(())
